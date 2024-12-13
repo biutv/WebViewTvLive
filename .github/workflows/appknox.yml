@@ -1,0 +1,54 @@
+#这个工作流使用的是没有经过GUTUB认证的操作。它们由第三方提供,并受
+#单独的服务条款、隐私政策和支持文档。
+#
+#阿普诺克斯:移动应用安全测试解决方案的领导者&l;httPS://www.appdnxcom/&tt;
+#
+#若要使用此工作流,您必须是一个为您的客户启用了GARS高级安全功能的现有的APPLORIX客户。
+# repository.
+#
+#如你不是**现有客户,请按此与我们联络,查询牌照及价格详情:
+# <https://www.appknox.com/free-trial>.
+#
+# Instructions:
+#
+#1在存储库设置中,导航到"秘密"并点击"新存储库秘密"。""你说什么?
+#秘密的应用程序,将你的应用程序的用户令牌粘贴到值域中。如果你没有一个纪念品
+#或需要生成一个新的,为GUTUB,访问APPLONX平台,进入帐户设置&DH;开发人员设置
+#并创建标记为吉塔的标记
+#
+#2参考下面详细的工作流,进行任何必要的调整,然后将其保存到存储库中。在…之后
+#操作执行,检查"安全性"选项卡查看结果
+
+姓名 :姓名 :
+
+ 在…上  :
+  推动  :
+    分枝  : [    分枝 : [   "main"   ]  "main"   ]
+  脉冲_请求  :
+    分枝  : [    分枝 : [   "main"   ]  "main"   ]
+ 乔布斯  :
+  全称  :
+    逃跑  :       最新运行 :
+    台阶  :
+      - 姓名  :         名称 : 结帐代码
+        使用  :           用途 : 操作/结账@V2
+
+      - 姓名  :         -名称 :授予格拉德卢执行许可
+        run: chmod +x gradlew
+
+      - name: Build the app
+        run: ./gradlew build                                         # Update this to build your Android or iOS application
+
+      - name: Appknox GitHub action
+        uses: appknox/appknox-github-action@b7d2bfb2321d5544e97bffcba48557234ab953a4
+        with:
+          appknox_access_token: ${{ secrets.APPKNOX_ACCESS_TOKEN }}
+          file_path: app/build/outputs/apk/debug/app-debug.apk        # Specify the path to your .ipa or .apk here
+          risk_threshold: MEDIUM                                      # Update this to desired risk threshold [LOW, MEDIUM, HIGH, CRITICAL]
+          sarif: Enable
+
+      - name: Upload SARIF to GHAS
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: report.sarif
