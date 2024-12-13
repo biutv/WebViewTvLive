@@ -1,0 +1,33 @@
+#此工作流将使用节点运行测试,然后在创建发布时将包发布到giusb包
+#有关详情,请参阅:httPS://文件、文件、资料/行动/出版-包装/出版-禁用-包装
+
+名称:编号.js包
+
+关于:
+  释放:
+    类型:[创建][创建]
+
+工作岗位:
+  建筑:
+    最新运行:
+    步骤:
+      - uses:       - uses: actions/checkout@v4
+      - uses:       - uses: actions/setup-node@v4
+        附有:
+          node-version: 20
+      - run:       - run: npm ci
+      -运行:国家预防机制测试
+
+  出版物:
+    需求:建设
+    最新运行:
+    步骤:
+      - uses:       - uses: actions/checkout@v4
+      - uses:       - uses: actions/setup-node@v4
+        附有:
+          node-version: 20
+          registry-url:           registry-url: https://registry.npmjs.org/://registry.npmjs.org/
+      - run:       - run: npm ci
+      -运行:国家预防机制公布
+        环境:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
