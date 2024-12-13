@@ -1,0 +1,78 @@
+#当提交被推到您的默认分支时,这个工作流将构建并将一个节点js应用程序推到一个azireWeb应用程序。
+#
+#这个工作流假设你已经创建了目标天蓝应用服务网站应用程序。
+#有关指示,请参阅httPS://文件,微软.com/环境信息系统/天瑞/应用服务/快速启动节点?标签=Linux&MP;枢纽=发展-环境-CLI
+#
+#以配置此工作流程:
+#
+#1下载你的蓝色网站应用的发布配置文件。你可以从你的网站应用程序的概览页面上下载这个文件。
+#欲了解更多信息:httPS://文件、微软网站/环境信息系统/天神/天神/应用服务/部署----巨人行动?标签=苹果层#生成部署全权证书
+#
+#2在您的存储库中创建一个名为"A进r/Webp.p.p.p.p.p"的秘密库中创建一个秘密,将发布概要文件的内容粘贴为秘密的值。
+#关于获取发布概况的说明,见:httPS://文件、微软、com/azp-服务/部署-吉塔-行动#配置……
+#
+#3更改该名称的值。可选择地更改下面的无源网络包和节点环境变量。
+#
+#如欲了解更多关于天蓝星行动的信息,请参阅:httPS:
+#如欲了解更多关于蓝色网站应用程序部署的信息,请采取行动:httPS://giwsub.com/azire/网站应用程序部署
+#更多的示例要从GUUUB动作工作流开始,以便将工作流部署到天蓝:httPS://GTUTPS://GTUUB.com/天蓝/工作流程-样本
+
+ 关于  :
+  推动   :
+    分枝                : [    分枝 : [                "main"               ]              "main"              ]
+  工作流程_部署           :
+
+环境         :
+  将此设置为应用程序的名称
+          ''        '。#将此设置为您的Web应用程序项目的路径,默认为存储库根
+  将此设置为节点版本使用
+
+准许      :
+  内容:改为
+
+工作岗位    :
+  建筑   :
+    最新运行  :
+    步骤 :
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: npm install, build, and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: .
+
+  deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: node-app
+
+    - name: 'Deploy to Azure WebApp'
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
